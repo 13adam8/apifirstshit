@@ -10,15 +10,17 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 
 app.post("/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+    console.log("Message received:", req.body.message);
+    console.log("Key exists:",!!process.env.GROQ_KEY);
+
     const completion = await groq.chat.completions.create({
-      messages: [{ role: "user", content: message }],
+      messages: [{ role: "user", content: req.body.message }],
       model: "llama-3.1-8b-instant",
     });
     res.json({ reply: completion.choices[0].message.content });
   } catch (error) {
-    console.error("GROQ ERROR:", error); // زيد هادي
-    res.status(500).json({ error: error.message }); // و هادي
+    console.error("FULL ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
