@@ -8,11 +8,18 @@ app.use(express.json());
 const groq = new Groq({ apiKey: process.env.GROQ_KEY });
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-app.post("/lead", async (req, res) => {
-  const { name, phone, interest } = req.body;
-  const { error } = await supabase.from("leads").insert([{ name, phone, interest }]);
-  if(error) return res.status(500).json({error});
-  res.json({ok: true});
+app.post("/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: message }],
+      model: "llama-3.1-8b-instant",
+    });
+    res.json({ reply: completion.choices[0].message.content });
+  } catch (error) {
+    console.error("GROQ ERROR:", error); // زيد هادي
+    res.status(500).json({ error: error.message }); // و هادي
+  }
 });
 
 app.post("/chat", async (req, res) => {
