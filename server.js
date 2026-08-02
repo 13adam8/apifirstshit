@@ -28,4 +28,4 @@ app.post('/generate-text', async (req, res) => {
   res.json({ text: result.choices[0].message.content, credits_left: user.credits - 1 });
 });
 
-app.listen(10000, () => console.log("السيرفر خدام على 10000"));
+app.listen(process.env.PORT || 3000, () => console.log("السيرفر خدام"))
